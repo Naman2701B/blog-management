@@ -9,7 +9,7 @@ const SocialShareButtons = ({ url, title }) => {
     return (
         <div className="w-full flex justify-between">
             <a
-                href={`https://www.facebook.com/dialog/share?app_id=818677993101510&display=popup&href=${url}`}
+                href={`https://www.facebook.com/dialog/share?app_id=${process.env.REACT_APP_FACEBOOK_APP_ID}&display=popup&href=${url}`}
                 target="_blank"
                 rel="noreferrer"
             >
@@ -29,7 +29,11 @@ const SocialShareButtons = ({ url, title }) => {
             >
                 <FaRedditSquare className="text-[#ff4500] w-12 h-auto" />
             </a>
-            <a href={`https://api.whatsapp.com/send/?text=${url}`} target="_blank" rel="noreferrer">
+            <a
+                href={`https://api.whatsapp.com/send/?text=${url}`}
+                target="_blank"
+                rel="noreferrer"
+            >
                 <FaWhatsappSquare className="text-[#25D366] w-12 h-auto" />
             </a>
         </div>
