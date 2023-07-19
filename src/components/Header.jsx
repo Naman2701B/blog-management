@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { images } from "../constants";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { MdKeyboardArrowDown } from "react-icons/md";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/actions/user";
+import { useNavigate } from "react-router-dom";
 
 const navItemsInfo = [
     { name: "Home", type: "link" },
@@ -61,11 +65,19 @@ const NavItem = ({ item }) => {
     );
 };
 const Header = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [navIsVisible, setNavIsVisible] = useState(false);
+    const userState = useSelector((state) => state.user);
+    const [profileDropDown, setProfileDropDown] = useState(false);
     const navVisbilityHandler = () => {
         setNavIsVisible((curState) => {
             return !curState;
         });
+    };
+
+    const logoutHandler = () => {
+        dispatch(logout());
     };
     return (
         <section className="sticky top-0 left-0 right-0 z-50 bg-white">
@@ -96,9 +108,54 @@ const Header = () => {
                             <NavItem key={item.name} item={item} />
                         ))}
                     </ul>
-                    <button className="mt-5 lg:mt-0 border-2 border-blue-500 px-6 py-2 rounded-full text-blue-500 font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300">
-                        Sign In
-                    </button>
+                    {userState.userInfo ? (
+                        <div className="text-white items-center gap-y-5 lg:text-dark-light flex flex-col lg:flex-row gap-x-2 font-semibold">
+                            <div className="relative group">
+                                <div className="flex flex-col items-center">
+                                    <button
+                                        className="mt-5 lg:mt-0 border-2 border-blue-500 px-3 py-2 rounded-full text-blue-500 font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300"
+                                        onClick={() =>
+                                            setProfileDropDown(!profileDropDown)
+                                        }
+                                    >
+                                        <span>Account</span>
+                                        <MdKeyboardArrowDown className="inline mx-1/3" />
+                                    </button>
+                                    <div
+                                        className={`${
+                                            profileDropDown ? "block" : "hidden"
+                                        } lg:hidden transition-all duration-500 pt-4 lg:absolute lg:bottom-0 lg:right-0 lg:transform lg:translate-y-full lg:group-hover:block w-max`}
+                                    >
+                                        <ul className="bg-dark-light lg:bg-transparent text-center flex flex-col shadow-lg rounded-lg overflow-hidden">
+                                            <button
+                                                onClick={() =>
+                                                    navigate("/profile")
+                                                }
+                                                type="button"
+                                                className="hover:bg-dark-hard hover:text-white px-4 py-2 text-white lg:text-dark-light"
+                                            >
+                                                Profile Page
+                                            </button>
+                                            <button
+                                                onClick={logoutHandler}
+                                                type="button"
+                                                className="hover:bg-dark-hard hover:text-white px-4 py-2 text-white lg:text-dark-light"
+                                            >
+                                                Logout
+                                            </button>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="mt-5 lg:mt-0 border-2 border-blue-500 px-6 py-2 rounded-full text-blue-500 font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300"
+                        >
+                            Sign In
+                        </button>
+                    )}
                 </div>
             </header>
         </section>
