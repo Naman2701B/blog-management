@@ -6,9 +6,10 @@ const {
     updatePost,
     deletePost,
     getPost,
+    getAllPost,
 } = require("../controllers/postControllers");
 
-router.post("/", authGuard, adminGuard, createPost);
+router.route("/").post(authGuard, adminGuard, createPost).get(getAllPost);
 router
     .route("/:slug")
     .delete(authGuard, adminGuard, deletePost)
