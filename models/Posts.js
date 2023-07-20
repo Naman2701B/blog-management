@@ -1,61 +1,50 @@
 const mongoose = require("mongoose");
-const bcryptjs = require("bcryptjs");
-const jsonwebtoken = require("jsonwebtoken");
 
-const UserSchema = new mongoose.Schema(
+const PostSchema = new mongoose.Schema(
     {
-        avatar: {
-            type: String,
-            default: "",
-        },
-        name: {
+        title: {
             type: String,
             required: true,
         },
-        email: {
+        caption: {
             type: String,
             required: true,
         },
-        password: {
+        slug: {
             type: String,
             required: true,
+            unique: true,
         },
-        verified: {
-            type: Boolean,
-            default: false,
+        body: {
+            type: Object,
+            required: true,
         },
-        verificationCode: {
+        photo: {
             type: String,
             required: false,
         },
-        admin: {
-            type: Boolean,
-            default: false,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
         },
+        tags: {
+            type: [String],
+        },
+        categories: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "PostCategories",
+            },
+        ],
     },
     { timestamps: true }
 );
 
-UserSchema.pre("save", async function (next) {
-    if (this.isModified("password")) {
-        this.password = await bcryptjs.hash(this.password, 10);
-        return next();
-    }
-
-    return next();
+PostSchema.virtual("comments", {
+    ref: "Comment",
+    localField: "_id",
+    foreignField: "postId",
 });
+const Post = mongoose.model("Post", PostSchema);
 
-UserSchema.methods.generateJWT = async function () {
-    return await jsonwebtoken.sign({ id: this._id }, process.env.JWT_SECRET, {
-        expiresIn: "30d",
-    });
-    // make it 1hr later
-};
-
-UserSchema.methods.comparePassword = async function (enteredPass) {
-    return await bcryptjs.compare(enteredPass, this.password);
-};
-
-const User = mongoose.model("User", UserSchema);
-
-module.exports = User;
+module.exports = Post;
