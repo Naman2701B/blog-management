@@ -100,7 +100,13 @@ const getPost = async (req, res, next) => {
                 match: { check: true, parent: null },
                 populate: [
                     { path: "user", select: ["avatar", "name"] },
-                    { path: "replies", match: { check: true } },
+                    {
+                        path: "replies",
+                        match: { check: true },
+                        populate: [
+                            { path: "user", select: ["avatar", "name"] },
+                        ],
+                    },
                 ],
             },
         ]);
@@ -117,7 +123,7 @@ const getPost = async (req, res, next) => {
 const getAllPost = async (req, res, next) => {
     try {
         const Posts = await Post.find({}).populate([
-            { path: "user", select: ["avatar", "name", "verified"] }
+            { path: "user", select: ["avatar", "name", "verified"] },
         ]);
         res.json(Posts);
     } catch (error) {
