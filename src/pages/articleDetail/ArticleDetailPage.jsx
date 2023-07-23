@@ -17,6 +17,7 @@ import Italic from "@tiptap/extension-italic";
 import parse from "html-react-parser";
 import ArticleDetailSkeleton from "./components/ArticleDetailSkeleton";
 import ErrorMessage from "../../components/ErrorMessage";
+import { useSelector } from "react-redux";
 
 const postsData = [
     {
@@ -57,7 +58,7 @@ const tagsData = [
 
 const ArticleDetailPage = () => {
     const { slug } = useParams();
-
+    const userState = useSelector((state) => state.user);
     const [breadCrumbsData, setBreadCrumbsData] = useState([]);
     const [body, setBody] = useState(null);
     const { data, isLoading, isError } = useQuery({
@@ -119,8 +120,10 @@ const ArticleDetailPage = () => {
                             {body}
                         </div>
                         <CommentContainer
+                            comments={data?.comments}
                             className="mt-10"
-                            logginedUserId="a"
+                            logginedUserId={userState?.userInfo?._id}
+                            postSlug={slug}
                         />
                     </article>
                     <div>
