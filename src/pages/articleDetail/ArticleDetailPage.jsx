@@ -7,7 +7,7 @@ import SuggestedPosts from "./container/SuggestedPosts";
 import CommentContainer from "../../components/comments/CommentsContainer";
 import SocialShareButtons from "../../components/SocialShareButtons";
 import { useQuery } from "@tanstack/react-query";
-import { getSinglePosts } from "../../services/index/posts";
+import { getAllPosts, getSinglePosts } from "../../services/index/posts";
 import { generateHTML } from "@tiptap/html";
 import Bold from "@tiptap/extension-bold";
 import Document from "@tiptap/extension-document";
@@ -19,43 +19,6 @@ import ArticleDetailSkeleton from "./components/ArticleDetailSkeleton";
 import ErrorMessage from "../../components/ErrorMessage";
 import { useSelector } from "react-redux";
 
-const postsData = [
-    {
-        _id: "1",
-        image: images.post1,
-        title: "Help children get better education.",
-        createdAt: "2023-01-28T15:35:53.607Z",
-    },
-    {
-        _id: "2",
-        image: images.post1,
-        title: "Help children get better education.",
-        createdAt: "2023-01-28T15:35:53.607Z",
-    },
-    {
-        _id: "3",
-        image: images.post1,
-        title: "Help children get better education.",
-        createdAt: "2023-01-28T15:35:53.607Z",
-    },
-    {
-        _id: "4",
-        image: images.post1,
-        title: "Help children get better education.",
-        createdAt: "2023-01-28T15:35:53.607Z",
-    },
-];
-
-const tagsData = [
-    "Medical",
-    "Lifestyle",
-    "Learn",
-    "Healthy",
-    "Food",
-    "Diet",
-    "Education",
-];
-
 const ArticleDetailPage = () => {
     const { slug } = useParams();
     const userState = useSelector((state) => state.user);
@@ -63,6 +26,7 @@ const ArticleDetailPage = () => {
     const [body, setBody] = useState(null);
     const { data, isLoading, isError } = useQuery({
         queryFn: () => getSinglePosts({ slug }),
+        queryKey: ["blog", slug],
         onSuccess: (data) => {
             setBreadCrumbsData([
                 { name: "Home", link: "/" },
@@ -81,6 +45,10 @@ const ArticleDetailPage = () => {
                 )
             );
         },
+    });
+    const { data: postsData } = useQuery({
+        queryFn: () => getAllPosts(),
+        queryKey: ["posts"],
     });
     return (
         <MainLayout>
@@ -130,7 +98,7 @@ const ArticleDetailPage = () => {
                         <SuggestedPosts
                             header="Latest Article"
                             posts={postsData}
-                            tags={tagsData}
+                            tags={data?.tags}
                             className="mt-8 lg:mt-0 lg:max-w-xs"
                         />
                         <div className="mt-7">
@@ -138,8 +106,8 @@ const ArticleDetailPage = () => {
                                 Share on
                             </h2>
                             <SocialShareButtons
-                                url={encodeURI("www.google.com")}
-                                title={encodeURIComponent("Google")}
+                                url={encodeURI(window.location.href)}
+                                title={encodeURIComponent(data?.title)}
                             />
                         </div>
                     </div>
