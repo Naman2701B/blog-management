@@ -26,9 +26,7 @@ const createComment = async (req, res, next) => {
 const updateComment = async (req, res, next) => {
     try {
         const { desc } = req.body;
-
         const comment = await Comment.findById(req.params.commentId);
-
         if (!comment) {
             const error = new Error("Comment not found!");
             return next(error);
@@ -41,4 +39,18 @@ const updateComment = async (req, res, next) => {
     }
 };
 
-module.exports = { createComment, updateComment };
+const deleteComment = async (req, res, next) => {
+    try {
+        const comment = await Comment.findByIdAndDelete(req.params.commentId);
+        await Comment.deleteMany({ parent: comment._id });
+        if (!comment) {
+            const error = new Error("Comment not found!");
+            return next(error);
+        }
+        return res.json({ message: "The comment is deleted successfully." });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { createComment, updateComment, deleteComment };
