@@ -122,10 +122,36 @@ const getPost = async (req, res, next) => {
 
 const getAllPost = async (req, res, next) => {
     try {
-        const Posts = await Post.find({}).populate([
-            { path: "user", select: ["avatar", "name", "verified"] },
-        ]);
-        res.json(Posts);
+        const filter = req.query.searchKeyword;
+        let where = {};
+        if (filter) {
+            where.title = { $regex: filter, $options: "i" };
+        }
+        let query = Post.find(where);
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * pageSize;
+        const total = await Post.countDocuments();
+        const pages = Math.ceil(total / pageSize);
+        if (page > pages) {
+            const error = new Error("No page found!");
+            return next(error);
+        }
+        const result = await query
+            .skip(skip)
+            .limit(pageSize)
+            .populate([
+                { path: "user", select: ["avatar", "name", "verified"] },
+            ])
+            .sort({ updatedAt: "descending" });
+        res.header({
+            "x-filter": filter,
+            "x-totalCount": JSON.stringify(total),
+            "x-currentPage": JSON.stringify(page),
+            "x-pageSize": JSON.stringify(pageSize),
+            "x-totalPageCount": JSON.stringify(pages),
+        });
+        return res.json(result);
     } catch (error) {
         next(error);
     }
