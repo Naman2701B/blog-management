@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 import LoginPage from "./pages/login/loginPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import AdminLayout from "./pages/admin/AdminLayout";
-import Admin from "./pages/admin/screens/admin";
+import Admin from "./pages/admin/screens/Admin";
 import Comments from "./pages/admin/screens/comments/Comments";
 import NewPost from "./pages/admin/screens/posts/NewPost";
 import ManagePost from "./pages/admin/screens/posts/ManagePost";

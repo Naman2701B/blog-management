@@ -80,7 +80,7 @@ const Header = () => {
                     <div className="fixed top-0 bottom-0 left-0 z-50 w-3/4 overflow-y-auto bg-white p-4 lg:static lg:h-full lg:w-full lg:p-6 ">
                         <Link to="/">
                             <img
-                                src={images.logo}
+                                src={images.Logo}
                                 alt="Logo"
                                 className="w-16"
                             />

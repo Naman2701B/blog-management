@@ -27,11 +27,9 @@ const Articles = () => {
                         />
                     ))
                 ) : isError ? (
-                    <ErrorMessage
-                        message="Couldn't find posts data"
-                    />
+                    <ErrorMessage message="Couldn't find posts data" />
                 ) : (
-                    data.map((post) => (
+                    data?.data.map((post) => (
                         <ArticleCard
                             key={post._id}
                             post={post}

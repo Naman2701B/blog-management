@@ -8,11 +8,7 @@ import { toast } from "react-hot-toast";
 const AdminLayout = () => {
     const navigate = useNavigate();
     const userState = useSelector((state) => state.user);
-    const {
-        data: profileData,
-        isLoading: profileIsLoading,
-        error: profileError,
-    } = useQuery({
+    const { isLoading: profileIsLoading } = useQuery({
         queryFn: () => {
             return getUserProfile({ token: userState.userInfo.token });
         },
