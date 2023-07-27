@@ -5,18 +5,22 @@ const { v4: uuidv4 } = require("uuid");
 const Comment = require("../models/Comment");
 
 const createPost = async (req, res, next) => {
+    const { title, caption, body, photo, tags } = req.body;
+
     try {
         const post = new Post({
-            title: "Sample Title",
-            caption: "Sample Caption",
+            title,
+            caption,
             slug: uuidv4(),
             body: {
-                type: "doc",
-                content: [],
+                type: body.type,
+                content: body.content,
             },
-            photo: "",
+            photo,
+            tags,
             user: req.user._id,
         });
+
         const createdPost = await post.save();
         return res.json(createdPost);
     } catch (error) {
@@ -133,9 +137,15 @@ const getAllPost = async (req, res, next) => {
         const skip = (page - 1) * pageSize;
         const total = await Post.find(where).countDocuments();
         const pages = Math.ceil(total / pageSize);
+        res.header({
+            "x-filter": filter,
+            "x-totalCount": JSON.stringify(total),
+            "x-currentPage": JSON.stringify(page),
+            "x-pageSize": JSON.stringify(pageSize),
+            "x-totalPageCount": JSON.stringify(pages),
+        });
         if (page > pages) {
-            const error = new Error("No page found!");
-            return next(error);
+            return res.json([]);
         }
         const result = await query
             .skip(skip)
@@ -144,13 +154,6 @@ const getAllPost = async (req, res, next) => {
                 { path: "user", select: ["avatar", "name", "verified"] },
             ])
             .sort({ updatedAt: "descending" });
-        res.header({
-            "x-filter": filter,
-            "x-totalCount": JSON.stringify(total),
-            "x-currentPage": JSON.stringify(page),
-            "x-pageSize": JSON.stringify(pageSize),
-            "x-totalPageCount": JSON.stringify(pages),
-        });
         return res.json(result);
     } catch (error) {
         next(error);
