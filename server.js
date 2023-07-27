@@ -6,6 +6,7 @@ const {
     invalidPathHandler,
 } = require("./middleware/errorHandler");
 const path = require("path");
+const cors = require("cors");
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
@@ -16,6 +17,7 @@ const app = express();
 dotenv.config();
 connectDB();
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.send("Server is running...");
