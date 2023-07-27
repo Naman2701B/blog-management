@@ -245,7 +245,7 @@ const ManagePost = () => {
                                                         Delete
                                                     </button>
                                                     <Link
-                                                        to="/"
+                                                        to={`/admin/posts/manage/edit/${post?.slug}`}
                                                         className="text-green-600 hover:text-green-900"
                                                     >
                                                         Edit
