@@ -1,13 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
-import { getAllPosts } from "../../../../services/index/posts";
+import { deletePosts, getAllPosts } from "../../../../services/index/posts";
 import { images, stables } from "../../../../constants";
 import { useState } from "react";
 import Pagination from "../../../../components/Pagination";
 import { useEffect } from "react";
+import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 let isFirstRun = true;
 const ManagePost = () => {
+    const userState = useSelector((state) => state.user);
+    const queryClient = useQueryClient();
     const [searchKeyword, setSearchKeyword] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -20,6 +25,24 @@ const ManagePost = () => {
         queryFn: () => getAllPosts(searchKeyword, currentPage),
         queryKey: ["posts"],
     });
+
+    const { mutate: mutateDeletePost, isLoading: isLoadingDeletePost } =
+        useMutation({
+            mutationFn: ({ slug, token }) => {
+                return deletePosts({
+                    slug,
+                    token,
+                });
+            },
+            onSuccess: () => {
+                queryClient.invalidateQueries(["posts"]);
+                toast.success("Post is deleted");
+            },
+            onError: (error) => {
+                toast.error(error.message);
+                console.log(error);
+            },
+        });
 
     useEffect(() => {
         if (isFirstRun) {
@@ -39,6 +62,11 @@ const ManagePost = () => {
         refetch();
     };
 
+    const deletePostHandler = ({ slug, token }) => {
+        if (window.confirm("Do you want to delete this post?")) {
+            mutateDeletePost({ slug, token });
+        }
+    };
     return (
         <div>
             <h1 className="text-2xl font-semibold">Manage Posts</h1>
@@ -115,6 +143,15 @@ const ManagePost = () => {
                                                 Loading...
                                             </td>
                                         </tr>
+                                    ) : postsData?.data?.length === 0 ? (
+                                        <tr>
+                                            <td
+                                                colSpan={5}
+                                                className="text-center py-10 w-full"
+                                            >
+                                                No posts found!
+                                            </td>
+                                        </tr>
                                     ) : (
                                         postsData?.data.map((post) => (
                                             <tr>
@@ -149,7 +186,7 @@ const ManagePost = () => {
                                                         {post.categories
                                                             .length > 0
                                                             ? post.categories[0]
-                                                            : "Uncategorized Text"}
+                                                            : "Uncategorized"}
                                                     </p>
                                                 </td>
                                                 <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
@@ -189,13 +226,30 @@ const ManagePost = () => {
                                                             : "No Tags"}
                                                     </div>
                                                 </td>
-                                                <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                                                    <a
-                                                        href="/"
-                                                        className="text-indigo-600 hover:text-indigo-900"
+                                                <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 space-x-5">
+                                                    <button
+                                                        disabled={
+                                                            isLoadingDeletePost
+                                                        }
+                                                        type="button"
+                                                        className="text-red-600 hover:text-red-900 disabled:opacity-70 disabled:cursor-not-allowed"
+                                                        onClick={() =>
+                                                            deletePostHandler({
+                                                                slug: post?.slug,
+                                                                token: userState
+                                                                    .userInfo
+                                                                    ?.token,
+                                                            })
+                                                        }
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                    <Link
+                                                        to="/"
+                                                        className="text-green-600 hover:text-green-900"
                                                     >
                                                         Edit
-                                                    </a>
+                                                    </Link>
                                                 </td>
                                             </tr>
                                         ))
