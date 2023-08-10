@@ -101,11 +101,13 @@ const CommentContainer = ({
 
     return (
         <div className={`${className}`}>
-            <CommentForm
-                btnLabel="Send"
-                formSubmitHandler={(value) => addCommentHandler(value)}
-                loading={isLoadingNewComment}
-            />
+            {logginedUserId && (
+                <CommentForm
+                    btnLabel="Send"
+                    formSubmitHandler={(value) => addCommentHandler(value)}
+                    loading={isLoadingNewComment}
+                />
+            )}
             <div className="space-y-4 mt-8">
                 {comments.map((comment) => (
                     <Comment

@@ -1,18 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { deletePosts, getAllPosts } from "../../../../services/index/posts";
-import { images, stables } from "../../../../constants";
 import { useState } from "react";
-import Pagination from "../../../../components/Pagination";
-import { useEffect } from "react";
-import { toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {
+    deletePosts,
+    getAllPostsOfUser,
+} from "../../../../services/index/posts";
+import { toast } from "react-hot-toast";
+import { useEffect } from "react";
+import stables from "../../../../constants/stables";
+import images from "../../../../constants/images";
+import { Link } from "react-router-dom";
+import Pagination from "../../../../components/Pagination";
 
 let isFirstRun = true;
-const ManagePost = () => {
-    const userState = useSelector((state) => state.user);
+
+const ManagePosts = () => {
     const queryClient = useQueryClient();
+    const userState = useSelector((state) => state.user);
     const [searchKeyword, setSearchKeyword] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -22,8 +26,13 @@ const ManagePost = () => {
         isFetching,
         refetch,
     } = useQuery({
-        queryFn: () => getAllPosts(searchKeyword, currentPage),
-        queryKey: ["posts"],
+        queryFn: () =>
+            getAllPostsOfUser(
+                userState.userInfo.token,
+                searchKeyword,
+                currentPage
+            ),
+        queryKey: ["postsOfUser"],
     });
 
     const { mutate: mutateDeletePost, isLoading: isLoadingDeletePost } =
@@ -34,7 +43,7 @@ const ManagePost = () => {
                     token,
                 });
             },
-            onSuccess: () => {
+            onSuccess: (data) => {
                 queryClient.invalidateQueries(["posts"]);
                 toast.success("Post is deleted");
             },
@@ -56,6 +65,7 @@ const ManagePost = () => {
         const { value } = e.target;
         setSearchKeyword(value);
     };
+
     const submitSearchKeywordHandler = (e) => {
         e.preventDefault();
         setCurrentPage(1);
@@ -63,17 +73,19 @@ const ManagePost = () => {
     };
 
     const deletePostHandler = ({ slug, token }) => {
-        if (window.confirm("Do you want to delete this post?")) {
+        if (window.confirm("Do you want to delete the post?")) {
             mutateDeletePost({ slug, token });
         }
     };
+
     return (
         <div>
             <h1 className="text-2xl font-semibold">Manage Posts</h1>
-            <div className="px-4 mx-auto w-full">
+
+            <div className="w-full px-4 mx-auto">
                 <div className="py-8">
                     <div className="flex flex-row justify-between w-full mb-1 sm:mb-0">
-                        <h2 className="text-2xl leading-tight">Users</h2>
+                        <h2 className="text-2xl leading-tight">Your Posts</h2>
                         <div className="text-end">
                             <form
                                 onSubmit={submitSearchKeywordHandler}
@@ -84,13 +96,14 @@ const ManagePost = () => {
                                         type="text"
                                         id='"form-subscribe-Filter'
                                         className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                                        placeholder="Post Title ..."
+                                        placeholder="Post title..."
                                         onChange={searchKeywordHandler}
                                         value={searchKeyword}
+                                        autoComplete="off"
                                     />
                                 </div>
                                 <button
-                                    className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200"
+                                    className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200"
                                     type="submit"
                                 >
                                     Filter
@@ -149,12 +162,12 @@ const ManagePost = () => {
                                                 colSpan={5}
                                                 className="text-center py-10 w-full"
                                             >
-                                                No posts found!
+                                                No posts found
                                             </td>
                                         </tr>
                                     ) : (
                                         postsData?.data.map((post) => (
-                                            <tr>
+                                            <tr key={post.title}>
                                                 <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                                                     <div className="flex items-center">
                                                         <div className="flex-shrink-0">
@@ -163,12 +176,14 @@ const ManagePost = () => {
                                                                 className="relative block"
                                                             >
                                                                 <img
-                                                                    alt="profil"
                                                                     src={
-                                                                        post?.image
+                                                                        post?.photo
                                                                             ? stables.UPLOAD_FOLDER_BASE_URL +
-                                                                              post?.image
-                                                                            : images.samplePostImage
+                                                                              post?.photo
+                                                                            : images.noImage
+                                                                    }
+                                                                    alt={
+                                                                        post.title
                                                                     }
                                                                     className="mx-auto object-cover rounded-lg w-10 aspect-square"
                                                                 />
@@ -211,19 +226,22 @@ const ManagePost = () => {
                                                                       tag,
                                                                       index
                                                                   ) => (
-                                                                      <p>
+                                                                      <p
+                                                                          key={
+                                                                              tag
+                                                                          }
+                                                                      >
                                                                           {tag}
                                                                           {post
                                                                               .tags
                                                                               .length -
                                                                               1 !==
-                                                                          index
-                                                                              ? ","
-                                                                              : ""}
+                                                                              index &&
+                                                                              ","}
                                                                       </p>
                                                                   )
                                                               )
-                                                            : "No Tags"}
+                                                            : "No tags"}
                                                     </div>
                                                 </td>
                                                 <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 space-x-5">
@@ -233,14 +251,14 @@ const ManagePost = () => {
                                                         }
                                                         type="button"
                                                         className="text-red-600 hover:text-red-900 disabled:opacity-70 disabled:cursor-not-allowed"
-                                                        onClick={() =>
+                                                        onClick={() => {
                                                             deletePostHandler({
                                                                 slug: post?.slug,
                                                                 token: userState
                                                                     .userInfo
-                                                                    ?.token,
-                                                            })
-                                                        }
+                                                                    .token,
+                                                            });
+                                                        }}
                                                     >
                                                         Delete
                                                     </button>
@@ -275,4 +293,4 @@ const ManagePost = () => {
     );
 };
 
-export default ManagePost;
+export default ManagePosts;
