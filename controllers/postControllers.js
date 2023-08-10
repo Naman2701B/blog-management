@@ -9,7 +9,7 @@ const createPost = async (req, res, next) => {
         const upload = uploadPicture.single("postPicture");
 
         const handleUpdatePostData = async (data, photo) => {
-            const { title, caption, body, tags = [] } = JSON.parse(data);
+            const { title, caption, body = null, tags = [] } = JSON.parse(data);
 
             const post = new Post({
                 title,
@@ -44,7 +44,6 @@ const createPost = async (req, res, next) => {
                 handleUpdatePostData(req.body.document, filename);
             }
         });
-
     } catch (error) {
         next(error);
     }
@@ -148,8 +147,23 @@ const getPost = async (req, res, next) => {
 
 const getAllPost = async (req, res, next) => {
     try {
+        const result = await Post.find()
+            .populate([
+                { path: "user", select: ["avatar", "name", "verified"] },
+            ])
+            .sort({ updatedAt: "descending" });
+        return res.json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getAllPostOfUser = async (req, res, next) => {
+    try {
         const filter = req.query.searchKeyword;
-        let where = {};
+        let where = {
+            user: req.user._id,
+        };
         if (filter) {
             where.title = { $regex: filter, $options: "i" };
         }
@@ -187,4 +201,5 @@ module.exports = {
     deletePost,
     getPost,
     getAllPost,
+    getAllPostOfUser,
 };
