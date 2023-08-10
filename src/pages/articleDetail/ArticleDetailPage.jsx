@@ -12,13 +12,12 @@ import { getAllPosts, getSinglePosts } from "../../services/index/posts";
 import ArticleDetailSkeleton from "./components/ArticleDetailSkeleton";
 import ErrorMessage from "../../components/ErrorMessage";
 import { useSelector } from "react-redux";
-import parseJSONtoHTML from "../../utils/parseJSONtoHTML";
+import Editor from "../../components/editor/Editor";
 
 const ArticleDetailPage = () => {
     const { slug } = useParams();
     const userState = useSelector((state) => state.user);
     const [breadCrumbsData, setBreadCrumbsData] = useState([]);
-    const [body, setBody] = useState(null);
     const { data, isLoading, isError } = useQuery({
         queryFn: () => getSinglePosts({ slug }),
         queryKey: ["blog", slug],
@@ -28,7 +27,6 @@ const ArticleDetailPage = () => {
                 { name: "Blog", link: "/blog" },
                 { name: "Article Title", link: `/blog/${data.slug}` },
             ]);
-            setBody(parseJSONtoHTML(data?.body));
         },
     });
     const { data: postsData } = useQuery({
@@ -69,8 +67,10 @@ const ArticleDetailPage = () => {
                         <h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
                             {data?.title}
                         </h1>
-                        <div className="mt-4 prose prose-sm sm:prose-base">
-                            {body}
+                        <div className="w-full">
+                            {!isLoading && !isError && (
+                                <Editor content={data?.body} editable={false} />
+                            )}
                         </div>
                         <CommentContainer
                             comments={data?.comments}

@@ -67,6 +67,7 @@ const RegisterPage = () => {
                                 Name
                             </label>
                             <input
+                                autoComplete="off"
                                 type="text"
                                 id="name"
                                 {...register("name", {
@@ -101,6 +102,7 @@ const RegisterPage = () => {
                                 Email
                             </label>
                             <input
+                                autoComplete="off"
                                 type="email"
                                 id="email"
                                 {...register("email", {

@@ -65,6 +65,7 @@ const LoginPage = () => {
                             <input
                                 type="email"
                                 id="email"
+                                autoComplete="off"
                                 {...register("email", {
                                     required: {
                                         value: true,

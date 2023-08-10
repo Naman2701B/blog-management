@@ -9,7 +9,7 @@ import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import { Highlight } from "@tiptap/extension-highlight";
+import Highlight from "@tiptap/extension-highlight";
 
 lowlight.registerLanguage("html", html);
 lowlight.registerLanguage("css", css);
