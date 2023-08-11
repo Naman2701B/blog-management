@@ -82,7 +82,7 @@ const Header = () => {
                             <img
                                 src={images.Logo}
                                 alt="Logo"
-                                className="w-16"
+                                className="w-[300px]"
                             />
                         </Link>
                         <h4 className="mt-10 font-bold text-[#C7C7C7]">
