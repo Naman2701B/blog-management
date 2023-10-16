@@ -1,16 +1,15 @@
 const uploadPicture = require("../middleware/uploadPictureMiddleware");
 const User = require("../models/User");
 const fileRemover = require("../utils/fileRemover");
-
+const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");
 const registerUser = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
-        // check if user already exists in the database
         let user = await User.findOne({ email });
         if (user) {
             throw new Error("This user already exists!");
         }
-        // creating a new user
         user = await User.create({
             name,
             email,
@@ -29,7 +28,6 @@ const registerUser = async (req, res, next) => {
         next(error);
     }
 };
-
 const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -54,7 +52,6 @@ const loginUser = async (req, res, next) => {
         next(error);
     }
 };
-
 const userProfile = async (req, res, next) => {
     try {
         let user = await User.findById(req.user._id);
@@ -77,7 +74,6 @@ const userProfile = async (req, res, next) => {
         next(error);
     }
 };
-
 const updateProfile = async (req, res, next) => {
     try {
         let user = await User.findById(req.user._id);
@@ -105,7 +101,6 @@ const updateProfile = async (req, res, next) => {
         next(error);
     }
 };
-
 const updateProfilePicture = async (req, res, next) => {
     try {
         const upload = uploadPicture.single("profilePicture");
@@ -116,7 +111,6 @@ const updateProfilePicture = async (req, res, next) => {
                 );
                 next(error);
             } else {
-                // everything went well
                 if (req.file) {
                     let filename;
                     let updatedUser = await User.findById(req.user._id);
@@ -158,11 +152,46 @@ const updateProfilePicture = async (req, res, next) => {
         next(error);
     }
 };
-
+const authGoogle = async (req, res, next) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+        const token = jwt.sign({ id: user.token }, process.env.JWT_SECRET);
+        const { password: pass, ...rest } = user._doc;
+        return res.status(201).json({
+            _id: user._id,
+            avatar: user.avatar,
+            name: user.name,
+            email: user.email,
+            verified: user.verified,
+            admin: user.admin,
+            token: await user.generateJWT(),
+        });
+    } else {
+        const generatedPassword = Math.random().toString(36).slice(-8);
+        const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+        const newUser = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword,
+            avatar: req.body.photo,
+        });
+        await newUser.save();
+        const { password: pass, ...rest } = newUser._doc;
+        return res.status(201).json({
+            avatar: user.avatar,
+            name: user.name,
+            email: user.email,
+            verified: user.verified,
+            admin: user.admin,
+            token: await user.generateJWT(),
+        });
+    }
+};
 module.exports = {
     registerUser,
     loginUser,
     userProfile,
     updateProfile,
     updateProfilePicture,
+    authGoogle,
 };

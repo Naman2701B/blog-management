@@ -8,7 +8,10 @@ const {
     getPost,
     getAllPost,
     getAllPostOfUser,
+    textToSpeech,
+    sentimentAnalyzer,
 } = require("../controllers/postControllers");
+const { addLikes } = require("../controllers/likesController");
 
 router.route("/").post(authGuard, adminGuard, createPost).get(getAllPost);
 router.route("/manage").get(authGuard, getAllPostOfUser);
@@ -16,6 +19,8 @@ router
     .route("/:slug")
     .delete(authGuard, adminGuard, deletePost)
     .put(authGuard, adminGuard, updatePost)
-    .get(getPost);
+    .get(getPost,textToSpeech)
+    .post(sentimentAnalyzer)
+router.route("/:slug/likes").put(authGuard, adminGuard, addLikes);
 
 module.exports = router;

@@ -3,14 +3,12 @@ const Post = require("../models/Posts");
 const fileRemover = require("../utils/fileRemover");
 const { v4: uuidv4 } = require("uuid");
 const Comment = require("../models/Comment");
-
+const Likes = require("../models/Likes");
 const createPost = async (req, res, next) => {
     try {
         const upload = uploadPicture.single("postPicture");
-
         const handleUpdatePostData = async (data, photo) => {
             const { title, caption, body = null, tags = [] } = JSON.parse(data);
-
             const post = new Post({
                 title,
                 caption,
@@ -23,11 +21,10 @@ const createPost = async (req, res, next) => {
                 tags,
                 user: req.user._id,
             });
-
             const createdPost = await post.save();
+            Likes.create({ post: createdPost._id });
             return res.json(createdPost);
         };
-
         upload(req, res, async function (err) {
             if (err) {
                 const error = new Error(
@@ -48,7 +45,6 @@ const createPost = async (req, res, next) => {
         next(error);
     }
 };
-
 const updatePost = async (req, res, next) => {
     try {
         const post = await Post.findOne({ slug: req.params.slug });
@@ -99,7 +95,6 @@ const updatePost = async (req, res, next) => {
         next(error);
     }
 };
-
 const deletePost = async (req, res, next) => {
     try {
         const post = await Post.findOneAndDelete({ slug: req.params.slug });
@@ -115,7 +110,6 @@ const deletePost = async (req, res, next) => {
         next(error);
     }
 };
-
 const getPost = async (req, res, next) => {
     try {
         const post = await Post.findOne({ slug: req.params.slug }).populate([
@@ -144,7 +138,6 @@ const getPost = async (req, res, next) => {
         next(error);
     }
 };
-
 const getAllPost = async (req, res, next) => {
     try {
         const result = await Post.find()
@@ -157,7 +150,6 @@ const getAllPost = async (req, res, next) => {
         next(error);
     }
 };
-
 const getAllPostOfUser = async (req, res, next) => {
     try {
         const filter = req.query.searchKeyword;
@@ -195,6 +187,72 @@ const getAllPostOfUser = async (req, res, next) => {
         next(error);
     }
 };
+const textToSpeech = async (req, res, next) => {
+    let sound_string = "";
+    return new Promise(async (resolve, reject) => {
+        try {
+            for (let i = 0; i < data.body.content.length; i++) {
+                for (let j = 0; j < data.body.content[i].content.length; j++) {
+                    sound_string += data.body.content[i].content[j].text;
+                }
+            }
+            const options = {
+                method: "GET",
+                url: "https://text-to-speech27.p.rapidapi.com/speech",
+                params: {
+                    text: sound_string,
+                    lang: "en-us",
+                },
+                responseType: "arraybuffer",
+            };
+            const response = await axios.request(options);
+            resolve(response.data);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+const sentimentAnalyzer = async (req, res, next) => {
+    let string = "";
+    return new Promise(async (resolve, reject) => {
+        try {
+            for (let i = 0; i < req.data.body.content.length; i++) {
+                for (
+                    let j = 0;
+                    j < req.data.body.content[i].content.length;
+                    j++
+                ) {
+                    string += req.data.body.content[i].content[j].text;
+                }
+            }
+            const options = {
+                method: "POST",
+                url: "https://webit-text-analytics.p.rapidapi.com/sentiment",
+                params: {
+                    text: string,
+                    language: "en",
+                },
+                data: {
+                    key1: "value",
+                    key2: "value",
+                },
+            };
+            const response = await axios.request(options);
+            const obj = {
+                positive: response?.data?.data?.sentiment?.positive,
+                negative: response?.data?.data?.sentiment?.negative,
+            };
+            if (obj) {
+                resolve(obj);
+            } else {
+                resolve("Not Found");
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
 module.exports = {
     createPost,
     updatePost,
@@ -202,4 +260,6 @@ module.exports = {
     getPost,
     getAllPost,
     getAllPostOfUser,
+    textToSpeech,
+    sentimentAnalyzer,
 };
