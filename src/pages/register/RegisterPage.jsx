@@ -7,6 +7,7 @@ import { signup } from "../../services/index/users";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/reducers/userReducer";
+import OAuth from "../../components/OAuth";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -203,6 +204,7 @@ const RegisterPage = () => {
                         >
                             Register
                         </button>
+                        <OAuth />
                         <p className="text-sm font-semibold text-[#5a7184]">
                             You have an account?
                             <Link to="/login" className="text-primary">

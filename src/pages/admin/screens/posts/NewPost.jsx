@@ -5,6 +5,7 @@ import { createPost } from "../../../../services/index/posts";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import Editor from "../../../../components/editor/Editor";
+import { load } from "../../../../../public/backup";
 // import PostTags from "./PostTags";
 
 const NewPost = () => {
@@ -124,7 +125,7 @@ const NewPost = () => {
                             className="rounded-xl w-full"
                         />
                     ) : (
-                        <div className="w-full min-h-[200px] h-full bg-blue-50/50 flex justify-center items-center">
+                        <div className="w-[50px] h-[50px] bg-blue-50/50 flex justify-center items-center">
                             <HiOutlineCamera className="w-7 h-auto text-primary" />
                         </div>
                     )}
@@ -144,12 +145,19 @@ const NewPost = () => {
             {/* submit button */}
             <div className="mx-10 pt-7 flex flex-row justify-between">
                 <button
-                    className="bg-green-500 text-white w-1/2 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="bg-green-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     type="submit"
                 >
                     Post
                 </button>
-                <button className="bg-red-500 text-white w-1/2 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                <button
+                    className="bg-green-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    type="button"
+                    onClick={load}
+                >
+                    Backup
+                </button>
+                <button className="bg-red-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed">
                     Discard
                 </button>
             </div>

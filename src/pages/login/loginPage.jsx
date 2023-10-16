@@ -7,6 +7,7 @@ import { login } from "../../services/index/users";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/reducers/userReducer";
+import OAuth from "../../components/OAuth";
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -136,6 +137,7 @@ const LoginPage = () => {
                         >
                             Sign In
                         </button>
+                        <OAuth />
                         <p className="text-sm font-semibold text-[#5a7184]">
                             Don't have an account?
                             <Link to="/register" className="text-primary">

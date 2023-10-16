@@ -10,7 +10,7 @@ import stables from "../../../../constants/stables";
 import ArticleDetailSkeleton from "../../../articleDetail/components/ArticleDetailSkeleton";
 import ErrorMessage from "../../../../components/ErrorMessage";
 import { HiOutlineCamera } from "react-icons/hi";
-import { Editor } from "@tiptap/react";
+import Editor from "../../../../components/editor/Editor";
 
 const EditPost = () => {
     const { slug } = useParams();
