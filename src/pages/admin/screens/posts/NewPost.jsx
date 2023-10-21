@@ -5,7 +5,7 @@ import { createPost } from "../../../../services/index/posts";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import Editor from "../../../../components/editor/Editor";
-import { load } from "../../../../../public/backup";
+// import { load } from "../../../../../public/backup";
 // import PostTags from "./PostTags";
 
 const NewPost = () => {
@@ -150,13 +150,13 @@ const NewPost = () => {
                 >
                     Post
                 </button>
-                <button
+                {/* <button
                     className="bg-green-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     type="button"
                     onClick={load}
                 >
                     Backup
-                </button>
+                </button> */}
                 <button className="bg-red-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed">
                     Discard
                 </button>
