@@ -4,6 +4,8 @@ const fileRemover = require("../utils/fileRemover");
 const { v4: uuidv4 } = require("uuid");
 const Comment = require("../models/Comment");
 const Likes = require("../models/Likes");
+const { authorize } = require("../utils/oauth");
+const { uploadBasic } = require("../utils/oauth");
 const createPost = async (req, res, next) => {
     try {
         const upload = uploadPicture.single("postPicture");
@@ -38,6 +40,7 @@ const createPost = async (req, res, next) => {
                 } else {
                     filename = "";
                 }
+                authorize().then((auth) => uploadBasic(auth, filename));
                 handleUpdatePostData(req.body.document, filename);
             }
         });
