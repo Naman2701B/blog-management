@@ -10,6 +10,7 @@ const {
     getAllPostOfUser,
     textToSpeech,
     sentimentAnalyzer,
+    getInsightData,
 } = require("../controllers/postControllers");
 const { addLikes } = require("../controllers/likesController");
 
@@ -19,8 +20,9 @@ router
     .route("/:slug")
     .delete(authGuard, adminGuard, deletePost)
     .put(authGuard, adminGuard, updatePost)
-    .get(getPost,textToSpeech)
-    .post(sentimentAnalyzer)
+    .get(getPost, textToSpeech)
+    .post(sentimentAnalyzer);
 router.route("/:slug/likes").put(authGuard, adminGuard, addLikes);
+router.route("/insights/:email").get(authGuard, adminGuard, getInsightData);
 
 module.exports = router;

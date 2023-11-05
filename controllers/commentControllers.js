@@ -1,5 +1,6 @@
 const Post = require("../models/Posts");
 const Comment = require("../models/Comment");
+const User = require("../models/User");
 
 const createComment = async (req, res, next) => {
     try {
@@ -53,4 +54,17 @@ const deleteComment = async (req, res, next) => {
     }
 };
 
-module.exports = { createComment, updateComment, deleteComment };
+const getComment = async (req, res, next) => {
+    try {
+        const user = await User.findOne({ email: req.params.email });
+        const comments = await Comment.find(
+            { user: user._id },
+            { desc: 1, createdAt: 1 }
+        );
+        return res.json(comments);
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
+module.exports = { createComment, updateComment, deleteComment, getComment };

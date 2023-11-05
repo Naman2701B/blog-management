@@ -13,7 +13,6 @@ const addLikes = async (req, res, next) => {
             if (!likePost) {
                 Likes.create({ post: post._id });
             }
-            console.log(likePost.user);
             for (i = 0; i < likePost.user.length; i++) {
                 if (likePost.user[i].toString() === req.user._id.toString()) {
                     removeLikes(likePost, req.user._id);

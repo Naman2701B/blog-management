@@ -6,6 +6,7 @@ const Comment = require("../models/Comment");
 const Likes = require("../models/Likes");
 const { authorize } = require("../utils/oauth");
 const { uploadBasic } = require("../utils/oauth");
+const User = require("../models/User");
 const createPost = async (req, res, next) => {
     try {
         const upload = uploadPicture.single("postPicture");
@@ -256,6 +257,31 @@ const sentimentAnalyzer = async (req, res, next) => {
     });
 };
 
+const getInsightData = async (req, res, next) => {
+    const user = await User.findOne({ email: req.params.email }, { _id: 1 });
+    const Posts = await Post.find(
+        { user: user },
+        { title: 1, _id: 1, photo: 1 }
+    );
+    const comments = [];
+    const likesPostCount = [];
+    for (let i = 0; i < Posts.length; i++) {
+        let comment = await Comment.find({ post: Posts[i]._id }, { _id: 1 });
+        let obj = { post: Posts[i]._id, commentData: comment };
+        let like = await Likes.findOne(
+            { post: Posts[i]._id },
+            { count: 1, _id: 0 }
+        );
+        let obj1 = { post: Posts[i]._id, likeData: like };
+        likesPostCount.push(obj1);
+        comments.push(obj);
+    }
+    return res.json({
+        postsData: Posts,
+        commentDetail: comments,
+        likeDetail: likesPostCount,
+    });
+};
 module.exports = {
     createPost,
     updatePost,
@@ -265,4 +291,5 @@ module.exports = {
     getAllPostOfUser,
     textToSpeech,
     sentimentAnalyzer,
+    getInsightData,
 };
