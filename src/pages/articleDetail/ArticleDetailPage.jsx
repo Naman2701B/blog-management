@@ -21,6 +21,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 
 const ArticleDetailPage = () => {
+    let likeStat = "empty";
     const { slug } = useParams();
     const userState = useSelector((state) => state.user);
     const [breadCrumbsData, setBreadCrumbsData] = useState([]);
@@ -58,7 +59,13 @@ const ArticleDetailPage = () => {
         setTypeComment(!typeComment);
     };
     const likeChange = () => {
+        if (likeStat === "empty") {
+            likeStat = "fill";
+        } else {
+            likeStat = "empty";
+        }
         setLikedPost(!likedPost);
+        addLikes();
     };
     const { data: postsData } = useQuery({
         queryFn: () => getAllPosts(),
@@ -150,7 +157,7 @@ const ArticleDetailPage = () => {
                             "5b73e136cfmsh8bf75048987ecefp1a5b72jsn3fca4e2107f4",
                         "X-RapidAPI-Host": "text-to-speech27.p.rapidapi.com",
                     },
-                    responseType: "arraybuffer", 
+                    responseType: "arraybuffer",
                 };
                 const response = await axios.request(options);
                 resolve(response.data);
@@ -179,8 +186,8 @@ const ArticleDetailPage = () => {
 
     // server side data render api 1 starts
     // const{mutate: playSound} = useMutation({
-    //     mutationFn: 
-    // })  
+    //     mutationFn:
+    // })
 
     useEffect(() => {
         if (userState?.userInfo?.token) setLogin(true);
@@ -235,6 +242,7 @@ const ArticleDetailPage = () => {
                                             id="fill"
                                             color="RED"
                                             className={classname}
+                                            onClick={likeChange}
                                         />
                                     ) : (
                                         <AiOutlineHeart

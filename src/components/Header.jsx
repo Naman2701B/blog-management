@@ -137,7 +137,9 @@ const Header = () => {
                                             {userState?.userInfo?.admin && (
                                                 <button
                                                     onClick={() =>
-                                                        navigate("/admin")
+                                                        navigate(
+                                                            "/admin/comments"
+                                                        )
                                                     }
                                                     type="button"
                                                     className="hover:bg-dark-hard hover:text-white px-4 py-2 text-white lg:text-dark-light"

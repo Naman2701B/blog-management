@@ -145,7 +145,7 @@ const NewPost = () => {
             {/* submit button */}
             <div className="mx-10 pt-7 flex flex-row justify-between">
                 <button
-                    className="bg-green-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="bg-green-500 text-white w-1/2 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     type="submit"
                 >
                     Post
@@ -157,7 +157,7 @@ const NewPost = () => {
                 >
                     Backup
                 </button> */}
-                <button className="bg-red-500 text-white w-1/3 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                <button className="bg-red-500 text-white w-1/2 mx-5 font-semibold rounded-lg px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed">
                     Discard
                 </button>
             </div>

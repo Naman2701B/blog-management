@@ -12,6 +12,7 @@ import Comments from "./pages/admin/screens/comments/Comments";
 import NewPost from "./pages/admin/screens/posts/NewPost";
 import ManagePost from "./pages/admin/screens/posts/ManagePost";
 import EditPost from "./pages/admin/screens/posts/EditPost";
+import Insights from "./pages/admin/screens/insights/insights";
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route index element={<Admin />} />
+                    <Route path="insights" element={<Insights />} />
                     <Route path="comments" element={<Comments />} />
                     <Route path="posts/new" element={<NewPost />} />
                     <Route path="posts/manage" element={<ManagePost />} />

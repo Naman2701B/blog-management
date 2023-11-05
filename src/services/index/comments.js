@@ -73,3 +73,18 @@ export const deleteComment = async ({ token, commentId }) => {
         throw new Error(error.message);
     }
 };
+
+export const getAllCommentsofUser = async (token, email) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+        const { data } = await axios.get(`/api/comments/${email}`, config);
+        console.log(data);
+        return data;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};

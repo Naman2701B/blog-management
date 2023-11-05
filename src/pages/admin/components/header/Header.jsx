@@ -1,19 +1,19 @@
 import { Link } from "react-router-dom";
 import { images } from "../../../../constants";
 import { useEffect, useState } from "react";
-import { AiFillDashboard, AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaComments } from "react-icons/fa";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlineInsights } from "react-icons/md";
 import NavItem from "./NavItem";
 import NavItemCollapse from "./NavItemCollapse";
 import { useWindowSize } from "@uidotdev/usehooks";
 
 const menu_items = [
     {
-        title: "Dashboard",
-        link: "/admin",
-        icon: <AiFillDashboard className="text-xl" />,
-        name: "dashboard",
+        title: "Insights",
+        link: "/admin/insights",
+        icon: <MdOutlineInsights className="text-xl" />,
+        name: "insights",
         type: "link",
     },
     {

@@ -1,10 +1,10 @@
 import React from "react";
-import ManagePost from "./posts/ManagePost";
+import Insights from "./insights/insights";
 
 const Admin = () => {
     return (
         <div>
-            <ManagePost />
+            <Insights />
         </div>
     );
 };

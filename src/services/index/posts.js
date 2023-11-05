@@ -103,39 +103,62 @@ export const createPost = async ({ postData, token }) => {
     }
 };
 
-export const soundPost = async(data) =>{
-    try{
+export const soundPost = async (data) => {
+    try {
         const config = {
-            headers:{
-                "X-RapidAPI-Key": "5b73e136cfmsh8bf75048987ecefp1a5b72jsn3fca4e2107f4",
+            headers: {
+                "X-RapidAPI-Key":
+                    "5b73e136cfmsh8bf75048987ecefp1a5b72jsn3fca4e2107f4",
                 "X-RapidAPI-Host": "text-to-speech27.p.rapidapi.com",
             },
         };
-        const {resData} = await axios.get(`/api/posts/${data?.slug}`, data, config)
+        const { resData } = await axios.get(
+            `/api/posts/${data?.slug}`,
+            data,
+            config
+        );
         return resData;
-    }catch(error){
+    } catch (error) {
         if (error.response && error.response.data.message)
             throw new Error(error.response.data.message);
         throw new Error(error.message);
     }
 };
 
-export const analyzePost = async(data)=>{
-    try{
+export const analyzePost = async (data) => {
+    try {
         const config = {
             headers: {
-                        "content-type": "application/json",
-                        "X-RapidAPI-Key":
-                            "5b73e136cfmsh8bf75048987ecefp1a5b72jsn3fca4e2107f4",
-                        "X-RapidAPI-Host":
-                            "webit-text-analytics.p.rapidapi.com",
-                    },
+                "content-type": "application/json",
+                "X-RapidAPI-Key":
+                    "5b73e136cfmsh8bf75048987ecefp1a5b72jsn3fca4e2107f4",
+                "X-RapidAPI-Host": "webit-text-analytics.p.rapidapi.com",
+            },
         };
-        const {resData} = await axios.post(`/api/posts/${data.slug}`, data, config);
+        const { resData } = await axios.post(
+            `/api/posts/${data.slug}`,
+            data,
+            config
+        );
         return resData;
-    }catch(error){
+    } catch (error) {
         if (error.response && error.response.data.message)
             throw new Error(error.response.data.message);
         throw new Error(error.message);
+    }
+};
+
+export const getInsights = async (token, email) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+        const { data } = await axios.get(`/api/posts/insights/${email}`, config);
+        console.log(data);
+        return data;
+    } catch (err) {
+        throw new Error(err.message);
     }
 };
