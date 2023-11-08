@@ -149,6 +149,7 @@ const getAllPost = async (req, res, next) => {
                 { path: "user", select: ["avatar", "name", "verified"] },
             ])
             .sort({ updatedAt: "descending" });
+        console.log("Received Request");
         return res.json(result);
     } catch (error) {
         next(error);
